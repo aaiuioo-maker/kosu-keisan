@@ -188,16 +188,16 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
   padding: 11px 13px; gap: 9px;
   border-bottom: 0.5px solid var(--border);
 }
-.field-row.row-p { padding-top: 11px; padding-bottom: 11px; }
+.field-row.row-p { padding-top: 9px; padding-bottom: 9px; }
 .field-row.row-c { padding-top: 8px;  padding-bottom: 8px; }
 .field-row.row-b { padding-top: 6px;  padding-bottom: 6px; }
 .field-row:last-of-type { border-bottom: none; }
 .field-label { flex: 1; min-width: 0; font-size: 16px; color: var(--text); line-height: 1.4; display: flex; align-items: flex-start; gap: 4px; }
 .lbl-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
 .lbl-text { display: flex; flex-direction: column; }
-.lbl-line1 { font-size: 16px; font-weight: 700; }
+.lbl-line1 { font-size: 16px; font-weight: 700; white-space: nowrap; }
 .lbl-line2 { font-size: 16px; font-weight: 700; }
-.field-sub { font-size: 12px; color: var(--text3); display: block; margin-top: 1px; }
+.field-sub { font-size: 11px; white-space: nowrap; letter-spacing: -0.3px; color: var(--text3); display: block; margin-top: 1px; }
 /* 入力ボタン左端を全行ツライチ（右から固定幅で並べる） */
 .tap-btn { margin-left: auto; }
 .tap-btn {
@@ -210,9 +210,10 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
   cursor: pointer; user-select: none;
 }
 /* パレット欄：幅広め */
-.tap-btn.w-p { min-width: 64px; }
-.field-row.row-p { gap: 7px; }
+.tap-btn.w-p { min-width: 54px; }
+.field-row.row-p { gap: 6px; }
 .field-row.row-p .field-unit { min-width: 16px; }
+.field-row.row-p .field-result { font-size: 16px; min-width: 72px; }
 /* ケース欄：少し狭め */
 .tap-btn.w-c { min-width: 58px; }
 /* バラ欄：さらに狭め */
@@ -530,14 +531,14 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
       <div class="section-label">🟦 パレット満載（24ケース／1パレット）</div>
       <div class="card card-pallet">
         <div class="field-row row-p">
-          <div class="field-label"><span class="lbl-icon">📦</span><span class="lbl-text"><span class="lbl-line1">20個入り</span><span class="lbl-line2">パレット</span><span class="field-sub">1パレット=24ケース</span><span class="field-sub">（480個）</span></span></div>
+          <div class="field-label"><span class="lbl-text"><span class="lbl-line1">20個入りパレット</span><span class="field-sub">1パレット=24ケース（480個）</span></span></div>
           <div class="tap-btn w-p" id="f-p20_2" onclick="toggleNp('p20_2',this)">0</div>
           <div class="field-unit">P</div>
           <div class="field-result" id="r-p20_2">0個</div>
         </div>
         <div class="numpad-wrap" id="np-p20_2"><div class="np-grid" id="npg-p20_2"></div></div>
         <div class="field-row row-p">
-          <div class="field-label"><span class="lbl-icon">📦</span><span class="lbl-text"><span class="lbl-line1">40個入り</span><span class="lbl-line2">パレット</span><span class="field-sub">1パレット=24ケース</span><span class="field-sub">（960個）</span></span></div>
+          <div class="field-label"><span class="lbl-text"><span class="lbl-line1">40個入りパレット</span><span class="field-sub">1パレット=24ケース（960個）</span></span></div>
           <div class="tap-btn w-p" id="f-p40_2" onclick="toggleNp('p40_2',this)">0</div>
           <div class="field-unit">P</div>
           <div class="field-result" id="r-p40_2">0個</div>
@@ -548,14 +549,14 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
       <div class="section-label">🟩 ケース（端数）</div>
       <div class="card card-case">
         <div class="field-row row-c">
-          <div class="field-label"><span class="lbl-icon">🗃</span><span class="lbl-text"><span class="lbl-line1">20個入り</span><span class="lbl-line2">ケース</span></span></div>
+          <div class="field-label"><span class="lbl-text"><span class="lbl-line1">20個入りケース</span></span></div>
           <div class="tap-btn w-c" id="f-c20_2" onclick="toggleNp('c20_2',this)">0</div>
           <div class="field-unit">ケース</div>
           <div class="field-result" id="r-c20_2">0個</div>
         </div>
         <div class="numpad-wrap" id="np-c20_2"><div class="np-grid" id="npg-c20_2"></div></div>
         <div class="field-row row-c">
-          <div class="field-label"><span class="lbl-icon">🗃</span><span class="lbl-text"><span class="lbl-line1">40個入り</span><span class="lbl-line2">ケース</span></span></div>
+          <div class="field-label"><span class="lbl-text"><span class="lbl-line1">40個入りケース</span></span></div>
           <div class="tap-btn w-c" id="f-c40_2" onclick="toggleNp('c40_2',this)">0</div>
           <div class="field-unit">ケース</div>
           <div class="field-result" id="r-c40_2">0個</div>
@@ -581,14 +582,14 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
       <div class="section-label">🟦 パレット満載（24ケース／1パレット）</div>
       <div class="card card-pallet">
         <div class="field-row row-p">
-          <div class="field-label"><span class="lbl-icon">📦</span><span class="lbl-text"><span class="lbl-line1">20個入り</span><span class="lbl-line2">パレット</span><span class="field-sub">1パレット=24ケース</span><span class="field-sub">（480個）</span></span></div>
+          <div class="field-label"><span class="lbl-text"><span class="lbl-line1">20個入りパレット</span><span class="field-sub">1パレット=24ケース（480個）</span></span></div>
           <div class="tap-btn w-p" id="f-p20_3" onclick="toggleNp('p20_3',this)">0</div>
           <div class="field-unit">P</div>
           <div class="field-result" id="r-p20_3">0個</div>
         </div>
         <div class="numpad-wrap" id="np-p20_3"><div class="np-grid" id="npg-p20_3"></div></div>
         <div class="field-row row-p">
-          <div class="field-label"><span class="lbl-icon">📦</span><span class="lbl-text"><span class="lbl-line1">40個入り</span><span class="lbl-line2">パレット</span><span class="field-sub">1パレット=24ケース</span><span class="field-sub">（960個）</span></span></div>
+          <div class="field-label"><span class="lbl-text"><span class="lbl-line1">40個入りパレット</span><span class="field-sub">1パレット=24ケース（960個）</span></span></div>
           <div class="tap-btn w-p" id="f-p40_3" onclick="toggleNp('p40_3',this)">0</div>
           <div class="field-unit">P</div>
           <div class="field-result" id="r-p40_3">0個</div>
@@ -599,14 +600,14 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
       <div class="section-label">🟩 ケース（端数）</div>
       <div class="card card-case">
         <div class="field-row row-c">
-          <div class="field-label"><span class="lbl-icon">🗃</span><span class="lbl-text"><span class="lbl-line1">20個入り</span><span class="lbl-line2">ケース</span></span></div>
+          <div class="field-label"><span class="lbl-text"><span class="lbl-line1">20個入りケース</span></span></div>
           <div class="tap-btn w-c" id="f-c20_3" onclick="toggleNp('c20_3',this)">0</div>
           <div class="field-unit">ケース</div>
           <div class="field-result" id="r-c20_3">0個</div>
         </div>
         <div class="numpad-wrap" id="np-c20_3"><div class="np-grid" id="npg-c20_3"></div></div>
         <div class="field-row row-c">
-          <div class="field-label"><span class="lbl-icon">🗃</span><span class="lbl-text"><span class="lbl-line1">40個入り</span><span class="lbl-line2">ケース</span></span></div>
+          <div class="field-label"><span class="lbl-text"><span class="lbl-line1">40個入りケース</span></span></div>
           <div class="tap-btn w-c" id="f-c40_3" onclick="toggleNp('c40_3',this)">0</div>
           <div class="field-unit">ケース</div>
           <div class="field-result" id="r-c40_3">0個</div>
