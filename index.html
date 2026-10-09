@@ -65,7 +65,7 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
 
 .dq-logo-wrap {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 14px;
   animation: fadeInDown 0.8s ease;
 }
 @keyframes fadeInDown {
@@ -93,7 +93,7 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
 .dq-scene {
   width: 280px;
   height: 160px;
-  margin: 0 auto 28px;
+  margin: 0 auto;
   position: relative;
   animation: fadeIn 1s ease 0.3s both;
 }
@@ -112,53 +112,28 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
 }
 @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
-/* ===== マチが あらわれた！ ===== */
-#encounter {
-  display: none;
-  position: fixed; inset: 0; z-index: 900;
-  background: #000;
-  flex-direction: column; align-items: center; justify-content: center;
-  gap: 22px;
-  padding: env(safe-area-inset-top,20px) 16px env(safe-area-inset-bottom,20px);
-  cursor: pointer; user-select: none;
+/* ===== マチが あらわれた！（切手計算のヒソカと同じ見せ方） ===== */
+.machi-scene {
+  width: 310px; height: 150px; margin: 12px auto 0; position: relative; overflow: hidden;
+  border: 3px solid var(--dq-gold); border-radius: 4px; background: #000;
+  visibility: hidden;
 }
-#encounter.show { display: flex; }
-#encounter.leave { animation: encLeave 0.5s ease forwards; }
-@keyframes encLeave { to { opacity: 0; } }
-/* 出てくるとき：画面が白く光ってから、キャラクターが現れる */
-#encounter.show::before {
-  content: ''; position: absolute; inset: 0; background: #fff;
-  pointer-events: none; animation: encFlash 0.45s steps(1) forwards;
+.machi-scene img { display: block; height: 100%; width: auto; margin: 0 auto; image-rendering: pixelated; }
+/* 1回目のタップでマチが登場（効果音を鳴らすにはタップが必要なため） */
+#opening.appear .machi-scene { visibility: visible; animation: encounter 0.9s steps(1) both; }
+#opening.appear .dq-msgbox { visibility: visible; animation: fadeIn 0.3s ease 0.9s both; }
+/* 敵があらわれた時のようにチカチカ点滅して登場 */
+@keyframes encounter {
+  0% { opacity: 0; } 15% { opacity: 1; } 30% { opacity: 0; } 45% { opacity: 1; }
+  60% { opacity: 0; } 75%,100% { opacity: 1; }
 }
-@keyframes encFlash { 0% { opacity: 1; } 33% { opacity: 0; } 66% { opacity: 1; } 100% { opacity: 0; } }
-.enc-img {
-  display: block;
-  width: min(68vw, 260px); height: auto;
-  image-rendering: pixelated;
-  animation: encAppear 0.5s ease 0.45s both;
+.dq-msgbox {
+  font-size: 15px; font-weight: 700; color: #f8f8f8;
+  background: var(--dq-shadow); border: 3px solid var(--dq-gold); border-radius: 4px;
+  padding: 10px 12px; width: 310px; min-height: 96px; margin: 8px auto 14px;
+  line-height: 1.7; white-space: pre-line; position: relative; visibility: hidden;
 }
-@keyframes encAppear {
-  from { opacity: 0; transform: translateY(12px) scale(0.92); }
-  to   { opacity: 1; transform: none; }
-}
-/* ドラクエ風のメッセージ枠 */
-.enc-msg {
-  position: relative;
-  width: 100%; max-width: 400px; min-height: 118px;
-  background: #000; color: #fff;
-  border: 3px solid #fff; border-radius: 8px;
-  box-shadow: 0 0 0 3px #000, 0 0 0 5px #fff;
-  padding: 16px 18px 26px;
-  font-size: 18px; font-weight: 700; line-height: 1.7;
-  white-space: pre-wrap;
-  animation: fadeIn 0.3s ease 0.6s both;
-}
-.enc-next {
-  position: absolute; right: 14px; bottom: 6px;
-  font-size: 14px; visibility: hidden;
-  animation: blink 0.8s step-end infinite;
-}
-
+.dq-cursor { display: inline-block; width: 8px; height: 14px; background: #f8f8f8; animation: blink 0.6s step-end infinite; vertical-align: middle; margin-left: 2px; }
 /* ===== APP ===== */
 #app {
   display: none;
@@ -533,13 +508,11 @@ html, body { height: 100%; background: #000080; color: var(--text); font-family:
     </svg>
   </div>
 
-  <div class="dq-tap-hint" id="tapHint">▼ タップしてはじめる</div>
-</div>
+  <!-- マチのドット絵 ＋ セリフ -->
+  <div class="machi-scene"><img src="machi.png" alt="マチ"></div>
+  <div class="dq-msgbox"><span id="machiMsg"></span><span class="dq-cursor"></span></div>
 
-<!-- ===== マチが あらわれた！ ===== -->
-<div id="encounter" onclick="encTap()">
-  <div class="enc-stage"><img src="machi.png" class="enc-img" alt="マチ"></div>
-  <div class="enc-msg"><span id="encText"></span><span class="enc-next" id="encNext">▼</span></div>
+  <div class="dq-tap-hint" id="tapHint">▼ タップしてはじめる</div>
 </div>
 
 <!-- ===== APP ===== -->
@@ -845,34 +818,30 @@ function playOpen() {
   } catch(e){}
 }
 
-/* 敵が出たときの「ジャジャッ」という音 */
+/* ===== ドラクエ風の効果音（オープニング用・切手計算と同じ音） ===== */
+function sq(ac, type, freq, start, dur, vol) {
+  var o = ac.createOscillator(), g = ac.createGain();
+  o.connect(g); g.connect(ac.destination);
+  o.type = type; o.frequency.setValueAtTime(freq, start);
+  g.gain.setValueAtTime(vol, start); g.gain.exponentialRampToValueAtTime(0.001, start + dur);
+  o.start(start); o.stop(start + dur + 0.02);
+}
+// 敵があらわれた！：上下にかけ回る速いフレーズ → 低い音でドン
 function playEncounter() {
   try {
     var ac = newAC();
-    var now = ac.currentTime;
-    [[392,0,0.08],[523,0.08,0.08],[392,0.16,0.08],[523,0.24,0.08],[784,0.34,0.30]].forEach(function(n) {
-      var o = ac.createOscillator(), g = ac.createGain();
-      o.connect(g); g.connect(ac.destination);
-      o.type = 'square';
-      o.frequency.setValueAtTime(n[0], now + n[1]);
-      g.gain.setValueAtTime(0.09, now + n[1]);
-      g.gain.exponentialRampToValueAtTime(0.001, now + n[1] + n[2]);
-      o.start(now + n[1]); o.stop(now + n[1] + n[2] + 0.02);
-    });
+    var now = ac.currentTime + 0.02;
+    var run = [1319,1175,1047,988,880,784,698,659, 698,784,880,988,1047,1175,1319,1568];
+    run.forEach(function(f, i) { sq(ac, 'square', f, now + i * 0.035, 0.05, 0.07); });
+    var t = now + run.length * 0.035 + 0.02;
+    sq(ac, 'square', 196, t, 0.35, 0.09); sq(ac, 'square', 233, t, 0.35, 0.06); sq(ac, 'sawtooth', 98, t, 0.4, 0.06);
   } catch(e){}
 }
-
-/* セリフの文字が出るときの小さな音 */
-function playType() {
+// セリフを打つ音：短い「ピッ」
+function playBlip() {
   try {
     var ac = newAC();
-    var o = ac.createOscillator(), g = ac.createGain();
-    o.connect(g); g.connect(ac.destination);
-    o.type = 'square';
-    o.frequency.setValueAtTime(1200, ac.currentTime);
-    g.gain.setValueAtTime(0.03, ac.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.03);
-    o.start(); o.stop(ac.currentTime + 0.03);
+    sq(ac, 'square', 1100, ac.currentTime, 0.03, 0.045);
   } catch(e){}
 }
 
@@ -923,74 +892,55 @@ for (var i = 0; i < 40; i++) {
 }
 
 
-var openingTapped = false;
+/* ===== マチが あらわれた！（切手計算のヒソカと同じしくみ） =====
+   1回目のタップでマチが登場し、セリフが自動で1文字ずつ流れる。
+   セリフの途中でタップすると残りを一気に表示。全部出たあとのタップでアプリ画面へ */
+var machiLines = [
+  'マチが あらわれた！',
+  '……パレットを 数えに来たの？',
+  'あたしの勘だと… 今日は数が合うよ'
+];
+var machiFull = machiLines.join('\n'), machiPos = 0, machiDone = false;
+function paintMachi() {
+  document.getElementById('machiMsg').textContent = machiFull.slice(0, machiPos);
+}
+function finishMachi() {
+  machiPos = machiFull.length; paintMachi(); machiDone = true;
+  document.getElementById('tapHint').textContent = '▼ タップしてすすむ';
+}
+function typeMachi() {
+  if (openingTapped || machiDone) return;
+  machiPos++; paintMachi();
+  var c = machiFull.charAt(machiPos - 1);
+  if (c !== ' ' && c !== '\n' && c !== '…') playBlip();   // 1文字ごとにピピピッ
+  if (machiPos >= machiFull.length) { finishMachi(); return; }
+  setTimeout(typeMachi, c === '\n' ? 380 : c === '…' ? 220 : 70);
+}
+
+var openingTapped = false, openingStage = 0;
 function openingTap() {
   if (openingTapped) return;
+  if (openingStage === 0) {
+    // 1回目のタップ：マチがあらわれる
+    openingStage = 1;
+    document.getElementById('opening').classList.add('appear');
+    document.getElementById('tapHint').textContent = '';
+    playEncounter();
+    setTimeout(typeMachi, 1100);
+    return;
+  }
+  // セリフの途中でタップしたら、残りを一気に表示
+  if (!machiDone) { finishMachi(); playBlip(); return; }
   openingTapped = true;
-  try { newAC(); } catch(e) {}  // スマホは、タップした瞬間に音を使える状態にしておく必要がある
+  playOpen();
   var op = document.getElementById('opening');
   op.style.transition = 'opacity 0.6s ease';
   op.style.opacity = '0';
   setTimeout(function() {
     op.style.display = 'none';
-    startEncounter();
-  }, 600);
-}
-
-/* ===== マチが あらわれた！（ドラクエ風の出会い） =====
-   タップで1行ずつ進む。文字が出ている途中でタップすると、その行を最後まで出す */
-var encLines = [
-  'マチが あらわれた！',
-  'マチ「……数を 数えに来たの？」',
-  'マチ「パレットも ケースも、糸を たどるみたいに 一つずつ 見れば 間違えない。」',
-  'マチ「あたしの勘だと……今日は 数が合う。さっさと 始めな。」'
-];
-var encIdx = 0, encTimer = null, encTyping = false;
-
-function startEncounter() {
-  document.body.style.background = '#000';
-  var en = document.getElementById('encounter');
-  en.classList.add('show');
-  playEncounter();
-  setTimeout(function() { typeEncLine(0); }, 700);
-}
-
-function typeEncLine(i) {
-  var el = document.getElementById('encText');
-  var line = encLines[i], n = 0;
-  encIdx = i; encTyping = true;
-  document.getElementById('encNext').style.visibility = 'hidden';
-  el.textContent = '';
-  clearInterval(encTimer);
-  encTimer = setInterval(function() {
-    n++;
-    el.textContent = line.slice(0, n);
-    if (n % 2 === 0) playType();
-    if (n >= line.length) endEncLine();
-  }, 55);
-}
-
-function endEncLine() {
-  clearInterval(encTimer);
-  encTyping = false;
-  document.getElementById('encText').textContent = encLines[encIdx];
-  document.getElementById('encNext').style.visibility = 'visible';
-}
-
-function encTap() {
-  if (!document.getElementById('encounter').classList.contains('show')) return;
-  if (encTyping) { endEncLine(); return; }
-  playTick();
-  if (encIdx + 1 < encLines.length) { typeEncLine(encIdx + 1); return; }
-  // 最後のセリフのあと：タイトルの音楽を鳴らしてアプリ画面へ
-  playOpen();
-  var en = document.getElementById('encounter');
-  en.classList.add('leave');
-  setTimeout(function() {
-    en.classList.remove('show');
     document.body.style.background = '#0f0f0f';
     document.getElementById('app').classList.add('visible');
-  }, 500);
+  }, 600);
 }
 
 /* ===== APP LOGIC ===== */
