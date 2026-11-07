@@ -1123,6 +1123,18 @@ function openingTap() {
   }, 600);
 }
 
+/* ===== オープニングのスイッチ =====
+   OPENING_ON = false のあいだはオープニングを出さず、すぐに計算の画面を出す。
+   オープニングの中身（マチの絵・音・セリフ）は消さずに残してあるので、
+   復活させるときは true にするだけでよい。 */
+var OPENING_ON = false;
+if (!OPENING_ON) {
+  openingTapped = true;
+  document.getElementById('opening').style.display = 'none';
+  document.body.style.background = '#0f0f0f';
+  document.getElementById('app').classList.add('visible');
+}
+
 /* ===== APP LOGIC ===== */
 var vals = {
   p20_2:0,p40_2:0,c20_2:0,c40_2:0,bara_2:0,
